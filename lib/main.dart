@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() {
   runApp(MyApp());
@@ -12,6 +13,7 @@ class MyApp extends StatelessWidget {
       themeMode: ThemeMode.dark,
       theme: ThemeData(
         primarySwatch: Colors.blue,
+
       ),
       darkTheme: ThemeData(
         primarySwatch: Colors.green
@@ -25,15 +27,7 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);  // Co to sa za keye?
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
+  // Fields in a Widget subclass are always marked "final".
   final String title;
 
   @override
@@ -60,156 +54,121 @@ class _MyHomePageState extends State<MyHomePage> {
       // ),
       body: Container(
         decoration: BoxDecoration(
-          gradient: RadialGradient(
-            center: Alignment(.85, -1.4),
-            colors: [
-              Color(0xFF1075F5),
-              Color(0xFF191E23),
-            ],
-            radius: 1.2,
-            stops: [
-              .35,
-              .5
-            ],
-            // colors: [
-            //   Color(0xFF1075F5),
-            //   Color(0xFF191E23),
-            // ],
-            // radius: 2,
-            // stops: [
-            //   .7,
-            //   1
-            // ],
-          ),
+          color: Color(0xFF282B32),
         ),
-        child: Center(
-          child: ListView(
-            shrinkWrap: true,
-              children: [
-                // Container(
-                //   child: RichText(
-                //     text: TextSpan(
-                //       text: 'Hello world!'
-                //     ),
-                //   )
-                // ),
-                SizedBox(
-                  width: double.infinity,
-                  height: MediaQuery.of(context).padding.top,
+        child: ListView(
+            children: [
+              Padding(
+                padding: EdgeInsets.all(10),
+                child: RichText(
+                  text: TextSpan(
+                    text: 'Hello world!',
+                    style: GoogleFonts.lobsterTwo(fontSize: 30),
+                  ),
+                )
+              ),
+              Padding(
+                padding: EdgeInsets.fromLTRB(20, 0, 20,20),
+                child: Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Color(0xFF3C3C42),
+                      borderRadius: BorderRadius.circular(999),
+                      border: Border.all(
+                        color: Color(0xFF24242A),
+                        width: 2,
+                      ),
+                    ),
+                    height: 40,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              "Wyszukaj...",
+                              style: GoogleFonts.comfortaa(
+                                color: Color(0xFFA0A3A3),
+                                fontWeight: FontWeight.bold
+                              ),
+                            ),
+                          ),
+                          Icon(
+                            Icons.search,
+                            color: Color(0xFFA0A3A3),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                )
+              ),
+              IntrinsicHeight(
+                child: Row(
+                  children: [
+                    HomescreenPanelOption(
+                      imageAsset: AssetImage('assets/images/rekomendacje.jpg'),
+                      caption: 'Polecane',
+                    ),
+                    HomescreenPanelOption(
+                      imageAsset: AssetImage('assets/images/playlisty.jpg'),
+                      caption: 'Playlisty',
+                    ),
+                  ],
                 ),
-                Placeholder(
-                  fallbackHeight: 160,
+              ),
+              IntrinsicHeight(
+                child: Row(
+                  children: [
+                    HomescreenPanelOption(
+                      imageAsset: AssetImage('assets/images/utwory.jpg'),
+                      caption: 'Utwory',
+                    ),
+                    HomescreenPanelOption(
+                      imageAsset: AssetImage('assets/images/zespol.jpg'),
+                      caption: 'Zespoły',
+                    ),
+                  ],
                 ),
-                // IntrinsicHeight(
-                //   child: Row(
-                //     children: [
-                //       HomescreenPanelOption(
-                //         imageAsset: AssetImage('assets/images/rekomendacje.jpg'),
-                //         caption: 'Polecane',
-                //       ),
-                //       HomescreenPanelOption(
-                //         imageAsset: AssetImage('assets/images/playlisty.jpg'),
-                //         caption: 'Playlisty',
-                //       ),
-                //     ],
-                //   ),
-                // ),
-                // IntrinsicHeight(
-                //   child: Row(
-                //     children: [
-                //       HomescreenPanelOption(
-                //         imageAsset: AssetImage('assets/images/utwory.jpg'),
-                //         caption: 'Utwory',
-                //       ),
-                //       HomescreenPanelOption(
-                //         imageAsset: AssetImage('assets/images/zespol.jpg'),
-                //         caption: 'Zespoły',
-                //       ),
-                //     ],
-                //   ),
-                // ),
-                Container(
-                  width: MediaQuery.of(context).size.width * .9,
-                  height: 160,
-                  color: Colors.blue,
-                ),
-                Container(
-                  width: MediaQuery.of(context).size.width * .9,
-                  height: 160,
-                  color: Colors.yellow,
-                ),
-                GridView.count(
+              ),
+              Expanded(
+                child: GridView.count(
+                  shrinkWrap: true,
                   primary: false,
                   padding: const EdgeInsets.all(20),
                   crossAxisCount: 2,
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 10,
-                  children: <Widget>[
+                  children: [
                     Container(
                       color: Colors.green,
+                      child: Text('whatever'),
                     ),
                     Container(
                       color: Colors.green,
-                    )
-                  ],
-
-                  // children: [
-                  //   Container(
-                  //     width: 100,
-                  //     height: 100,
-                  //     color: Colors.green,
-                  //     child: Text('whatever'),
-                  //   ),
-                  //   Container(
-                  //     color: Colors.green,
-                  //     child: Text('whatever'),
-                  //   ),
-                  //   Container(
-                  //     color: Colors.green,
-                  //     child: Text('whatever'),
-                  //   ),
-                  //   Container(
-                  //     color: Colors.green,
-                  //     child: Text('whatever'),
-                  //   ),
-                    // Card(
-                    //   clipBehavior: Clip.antiAlias,
-                    //   child: Column(
-                    //     // crossAxisAlignment: CrossAxisAlignment.start,
-                    //     children: [
-                    //       SizedBox(
-                    //         child: Image(
-                    //           image: AssetImage('assets/images/playlisty.jpg'),
-                    //           fit: BoxFit.cover,
-                    //         ),
-                    //       ),
-                    //       Container(
-                    //         child: Padding(
-                    //           padding: EdgeInsets.all(10),
-                    //           child: Column(
-                    //             crossAxisAlignment: CrossAxisAlignment.start,
-                    //             children: [
-                    //               Text(
-                    //                 'Playlisty',
-                    //                 style: Theme.of(context).textTheme.headline6
-                    //               ),
-                    //             ],
-                    //           ),
-                    //         ),
-                    //       )
-                    //     ],
-                    //   ),
-                    // ),
-                  // ]
-                )
-              ],
-            ),
-            // child: Container(
-            //     height: 100,
-            //     width: 100,
-            //     color: Colors.green
-            // ),
-        ),
+                      child: Text('whatever'),
+                    ),
+                    Container(
+                      color: Colors.green,
+                      child: Text('whatever'),
+                    ),
+                    Container(
+                      color: Colors.green,
+                      child: Text('whatever'),
+                    ),
+                    Container(
+                      color: Colors.green,
+                      child: Text('whatever'),
+                    ),
+                    Container(
+                      color: Colors.green,
+                      child: Text('whatever'),
+                    ),
+                  ]
+                ),
+              )
+            ],
+          ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
@@ -281,11 +240,6 @@ class HomescreenPanelOption extends StatelessWidget {
     final double screenWidth = MediaQuery.of(context).size.width;
     double tileRatio = 0.3333;
 
-    TextStyle tileTextStyle = new TextStyle(
-        fontSize: 14,
-        color: Color(0xFFDBDFE0),
-    );
-
     return Container(
       color: Color(0xFF1F242A),
       margin: EdgeInsets.all(screenWidth * tileRatio * .05),
@@ -293,7 +247,11 @@ class HomescreenPanelOption extends StatelessWidget {
       child: Column(
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(10),
+              topRight: Radius.circular(10),
+              bottomRight: Radius.circular(10)
+            ),
             child: Image(
               image: this.imageAsset,
               width: screenWidth * tileRatio,
@@ -308,7 +266,11 @@ class HomescreenPanelOption extends StatelessWidget {
             width: screenWidth * tileRatio,
             child: Text(
               caption,
-              style: tileTextStyle,
+              style: GoogleFonts.comfortaa(
+                color: Color(0xFFDBDFE0),
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+              ),
               maxLines: 1,
             ),
           )
