@@ -35,6 +35,7 @@ dev_dependencies:
   animations: "2.0.1"
   flutter_launcher_icons: "^0.9.0"
   google_fonts: "2.1.0"
+  lint: "1.5.3"
 
 flutter_icons:
   android: "launcher_icon"

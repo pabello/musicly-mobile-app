@@ -25,41 +25,28 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);  // Co to sa za keye?
+  MyHomePage({Key key, this.title}) : super(key: key);
 
   // Fields in a Widget subclass are always marked "final".
   final String title;
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();  // To jest lacznik miedzy widgetem, a stanem, cnie?
+  _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
 
   @override  // dzieki temu nadpisaniu metody UI sie uaktualnia?
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called.
-    //\
-
-    return Scaffold(  // czy tutaj jest opisane zachowanie dla kazdego elementu oddzielnie?
-      // appBar: new AppBar(
-      //   toolbarHeight: 0,
-      // ),
+    return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: Color(0xFF282B32),
         ),
         child: ListView(
-            children: [
+            children: <Widget> [
               Padding(
-                padding: EdgeInsets.all(10),
+                padding: const EdgeInsets.fromLTRB(15, 15, 10, 10),
                 child: RichText(
                   text: TextSpan(
                     text: 'Hello world!',
@@ -68,14 +55,14 @@ class _MyHomePageState extends State<MyHomePage> {
                 )
               ),
               Padding(
-                padding: EdgeInsets.fromLTRB(20, 0, 20,20),
+                padding: const EdgeInsets.fromLTRB(20, 0, 20,20),
                 child: Expanded(
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Color(0xFF3C3C42),
+                      color: const Color(0xFF3C3C42),
                       borderRadius: BorderRadius.circular(999),
                       border: Border.all(
-                        color: Color(0xFF24242A),
+                        color: const Color(0xFF24242A),
                         width: 2,
                       ),
                     ),
@@ -83,17 +70,17 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Row(
-                        children: [
+                        children: <Widget> [
                           Expanded(
                             child: Text(
-                              "Wyszukaj...",
+                              'Wyszukaj...',
                               style: GoogleFonts.comfortaa(
-                                color: Color(0xFFA0A3A3),
+                                color: const Color(0xFFA0A3A3),
                                 fontWeight: FontWeight.bold
                               ),
                             ),
                           ),
-                          Icon(
+                          const Icon(
                             Icons.search,
                             color: Color(0xFFA0A3A3),
                           ),
@@ -105,13 +92,14 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               IntrinsicHeight(
                 child: Row(
-                  children: [
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <HomescreenPanelOption> [
                     HomescreenPanelOption(
-                      imageAsset: AssetImage('assets/images/rekomendacje.jpg'),
+                      imageAsset: const AssetImage('assets/images/rekomendacje.jpg'),
                       caption: 'Polecane',
                     ),
                     HomescreenPanelOption(
-                      imageAsset: AssetImage('assets/images/playlisty.jpg'),
+                      imageAsset: const AssetImage('assets/images/playlisty.jpg'),
                       caption: 'Playlisty',
                     ),
                   ],
@@ -119,13 +107,14 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               IntrinsicHeight(
                 child: Row(
-                  children: [
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <HomescreenPanelOption> [
                     HomescreenPanelOption(
-                      imageAsset: AssetImage('assets/images/utwory.jpg'),
+                      imageAsset: const AssetImage('assets/images/utwory.jpg'),
                       caption: 'Utwory',
                     ),
                     HomescreenPanelOption(
-                      imageAsset: AssetImage('assets/images/zespol.jpg'),
+                      imageAsset: const AssetImage('assets/images/zespol.jpg'),
                       caption: 'Zespoły',
                     ),
                   ],
@@ -139,7 +128,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   crossAxisCount: 2,
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 10,
-                  children: [
+                  children: <Widget> [
                     Container(
                       color: Colors.green,
                       child: Text('whatever'),
@@ -170,11 +159,30 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      bottomNavigationBar: SizedBox(
+        height: 50,
+        child: BottomNavigationBar(
+          unselectedFontSize: 11,
+          selectedFontSize: 11,
+          fixedColor: const Color(0xFF87DBEA),
+          unselectedItemColor: const Color(0xFFA0A3A3),
+          backgroundColor: const Color(0xFF33353D),
+          items: const <BottomNavigationBarItem> [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              label: 'Home'
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.audiotrack_sharp),
+              label: 'Music for you'
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.settings),
+              label: 'Settings'
+            )
+          ],
+        ),
+      ),
     );
   }
 }
@@ -185,15 +193,15 @@ class AppBackground extends StatelessWidget {
     return Scaffold(
       body: Center(
         child: Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: RadialGradient(
               center: Alignment(1.7, -2.8),
-              colors: [
+              colors: <Color> [
                 Color(0xFF1075F5),
                 Color(0xFF191E23)
               ],
               radius: 2,
-              stops: [
+              stops: <double> [
                 .7,
                 1
               ],
@@ -206,17 +214,17 @@ class AppBackground extends StatelessWidget {
 }
 
 class Square extends StatelessWidget {
-  final color;
-  final size;
+  const Square({ this.color = Colors.black, this.size = 100.0});
 
-  Square({ this.color = Colors.black, this.size = 100.0});
+  final Color color;
+  final double size;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: this.size,
-      height: this.size,
-      color: this.color,
+      width: size,
+      height: size,
+      color: color,
 
       child: Align(
           alignment: Alignment.bottomCenter,
@@ -227,47 +235,47 @@ class Square extends StatelessWidget {
 }
 
 class HomescreenPanelOption extends StatelessWidget {
-  final AssetImage imageAsset;
-  final String caption;
-
-  HomescreenPanelOption({
+  const HomescreenPanelOption({
     this.imageAsset,
     this.caption,
   });
 
+  final AssetImage imageAsset;
+  final String caption;
+
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-    double tileRatio = 0.3333;
+    const double tileRatio = 0.3333;
 
     return Container(
-      color: Color(0xFF1F242A),
+      color: const Color(0xFF1F242A),
       margin: EdgeInsets.all(screenWidth * tileRatio * .05),
       padding: EdgeInsets.all(screenWidth * tileRatio * .08),
       child: Column(
-        children: [
+        children: <Widget> [
           ClipRRect(
-            borderRadius: BorderRadius.only(
+            borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(10),
               topRight: Radius.circular(10),
               bottomRight: Radius.circular(10)
             ),
             child: Image(
-              image: this.imageAsset,
+              image: imageAsset,
               width: screenWidth * tileRatio,
               height: screenWidth * tileRatio,
               fit: BoxFit.cover,
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 5,
           ),
-          Container(
+          SizedBox(
             width: screenWidth * tileRatio,
             child: Text(
               caption,
               style: GoogleFonts.comfortaa(
-                color: Color(0xFFDBDFE0),
+                color: const Color(0xFFDBDFE0),
                 fontSize: 15,
                 fontWeight: FontWeight.bold,
               ),
