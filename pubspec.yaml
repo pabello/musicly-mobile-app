@@ -32,10 +32,11 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  animations: "2.0.1"
-  flutter_launcher_icons: "^0.9.0"
-  google_fonts: "2.1.0"
-  lint: "1.5.3"
+  animations: ^2.0.1
+  flutter_launcher_icons: ^0.9.0
+  google_fonts: ^2.1.0
+  lint: ^1.5.3
+  material_floating_search_bar: ^0.3.4
 
 flutter_icons:
   android: "launcher_icon"
