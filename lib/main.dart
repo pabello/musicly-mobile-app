@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
+import 'package:musicly_app/favorites_page.dart';
+import 'package:musicly_app/home_page.dart';
 import 'package:musicly_app/route_generator.dart';
+import 'package:back_button_interceptor/back_button_interceptor.dart';
+import 'package:musicly_app/search_page.dart';
+import 'package:musicly_app/settings_page.dart';
 
 void main() {
   runApp(MyApp());
@@ -13,70 +18,76 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(primarySwatch: Colors.lightBlue),
       // title: 'Musicly',
-      initialRoute: '/',
-      onGenerateRoute: RouteGenerator.generateRoute,
+      home: const ApplicationMainView(),
     );
   }
 }
 
-class StatefulBottomNavigationBar extends StatefulWidget {
-  static int currentNavBarIndex = 0;
+class ApplicationMainView extends StatefulWidget {
+  const ApplicationMainView({Key key, this.title}) : super(key: key);
+  final String title;
 
   @override
-  State<StatefulWidget> createState() => BottomNavigationBarState();
+  State<ApplicationMainView> createState() => _ApplicationMainView();
 }
 
-class BottomNavigationBarState extends State<StatefulBottomNavigationBar> {
-  final Map<int, String> indexToRoute = <int, String>{
-    0: '/',
-    1: '/search',
-    2: '/favorites',
-    3: '/settings',
-  };
-
-  void setCurrentNavBarIndex(int index) {
-    if (index != StatefulBottomNavigationBar.currentNavBarIndex &&
-        indexToRoute.keys.contains(index)) {
-      StatefulBottomNavigationBar.currentNavBarIndex = index;
-    }
-  }
-
-  void onNavBarTapped(int index) {
-    if (index != StatefulBottomNavigationBar.currentNavBarIndex) {
-      setCurrentNavBarIndex(index);
-      Navigator.of(context).pushNamed(indexToRoute[index]);
-    }
-  }
+class _ApplicationMainView extends State<ApplicationMainView> {
+  int _currentPageIndex = 0;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 50,
-      child: BottomNavigationBar(
-        unselectedFontSize: 11,
-        selectedFontSize: 11,
-        selectedItemColor: const Color(0xFF87DBEA),
-        unselectedItemColor: const Color(0xFFA0A3A3),
-        backgroundColor: const Color(0xFF33353D),
-        currentIndex: StatefulBottomNavigationBar.currentNavBarIndex,
-        onTap: onNavBarTapped,
-        type: BottomNavigationBarType.fixed,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.audiotrack_sharp), label: 'Search'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.favorite), label: 'Favorites'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.settings), label: 'Settings'),
+    return Scaffold (
+      backgroundColor: const Color(0xFF282B32),
+      body: IndexedStack(
+        index: _currentPageIndex,
+        children: <Widget>[
+          HomePage(),
+          SearchPage(),
+          FavoritesPage(),
+          SettingsPage(),
         ],
       ),
+      bottomNavigationBar: buildBottomNavBar(),
+      // resizeToAvoidBottomInset: false,
     );
   }
+
+  void onNavBarTapped(int index) {
+    setState(() {
+      _currentPageIndex = index;
+    });
+  }
+
+  Widget buildBottomNavBar() {
+      // indexHistory = <int>[widget.currentNavBarIndex];
+      // BackButtonInterceptor.add(myInterceptor);
+      return SizedBox(
+        height: 50,
+        child: BottomNavigationBar(
+          unselectedFontSize: 11,
+          selectedFontSize: 11,
+          selectedItemColor: const Color(0xFF87DBEA),
+          unselectedItemColor: const Color(0xFFA0A3A3),
+          backgroundColor: const Color(0xFF33353D),
+          currentIndex: _currentPageIndex,
+          onTap: onNavBarTapped,
+          type: BottomNavigationBarType.fixed,
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.favorite), label: 'Favorites'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.settings), label: 'Settings'),
+          ],
+        ),
+      );
+    }
 }
+
 
 // class MyHomePage extends StatefulWidget {
 //   const MyHomePage({Key key, this.title}) : super(key: key);

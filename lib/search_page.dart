@@ -1,12 +1,51 @@
 import 'package:flutter/material.dart';
+import 'package:musicly_app/main.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 
 class SearchPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    throw UnimplementedError();
+    return SafeArea(
+      child: Stack(
+        children: <Widget>[
+          ListView(
+            padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+            children: <Widget>[
+              RichText(text: const TextSpan(
+                text: 'Wyszukaj artystów/utwory',
+              )),
+              ...previousSearches()
+            ],
+          ),
+          buildFloatingSearchBar(context),
+        ],
+      ),
+    );
   }
+
+  List<ListTile> previousSearches() {
+    List<ListTile> listTiles = <ListTile>[];
+    previousSearchesStatic.forEach((element) {
+      listTiles.add(ListTile(
+        leading: Icon(Icons.account_circle_outlined),
+        title: Text(element),
+        subtitle: Text('Artist'),
+        // Todo: defferentiate artists from recordings
+        trailing: Icon(Icons.highlight_remove),
+      ));
+    });
+    return listTiles;
+  }
+
+  List<String> previousSearchesStatic = <String>[
+    'U2',
+    'ACDC',
+    'Kwiat jabłoni',
+    'Łydka grubasa',
+    'Rammstein',
+    'Iron Maiden',
+    'Led Zeppelin'
+  ];
 
   Widget buildFloatingSearchBar(BuildContext context) {
       final bool isPortrait =

@@ -11,7 +11,7 @@ class RouteGenerator {
 
     switch (settings.name) {
       case '/':
-        return MaterialPageRoute<dynamic>(builder: (_) => MyHomePage());
+        return MaterialPageRoute<dynamic>(builder: (_) => HomePage());
       case '/search':
         return MaterialPageRoute<dynamic>(builder: (_) => SearchPage());
       case '/favorites':

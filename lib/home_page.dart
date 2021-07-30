@@ -1,19 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:musicly_app/main.dart';
+// import 'package:musicly_app/main.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-
-class MyHomePage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFF282B32),
-      // resizeToAvoidBottomInset: false,
-      body: HomePage(),
-      bottomNavigationBar: StatefulBottomNavigationBar(),
-    );
-  }
-}
 
 class HomePage extends StatelessWidget {
   @override

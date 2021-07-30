@@ -37,6 +37,7 @@ dev_dependencies:
   google_fonts: ^2.1.0
   lint: ^1.5.3
   material_floating_search_bar: ^0.3.4
+  back_button_interceptor: ^5.0.1
 
 flutter_icons:
   android: "launcher_icon"
