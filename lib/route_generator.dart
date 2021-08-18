@@ -1,24 +1,23 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:musicly_app/home_page.dart';
-import 'package:musicly_app/error_page.dart';
-import 'package:musicly_app/search_page.dart';
-import 'package:musicly_app/settings_page.dart';
-import 'package:musicly_app/favorites_page.dart';
+import 'package:musicly_app/views/home_page.dart';
+import 'package:musicly_app/views/error_page.dart';
+import 'package:musicly_app/views/search_page.dart';
+import 'package:musicly_app/views/settings_page.dart';
+import 'package:musicly_app/views/favorites_page.dart';
+import 'package:musicly_app/views/recording_view.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
-    final args = settings.arguments;
+    final Object args = settings.arguments;
 
     switch (settings.name) {
       case '/':
         return MaterialPageRoute<dynamic>(builder: (_) => HomePage());
-      case '/search':
-        return MaterialPageRoute<dynamic>(builder: (_) => SearchPage());
-      case '/favorites':
+      case '/recording':
         return MaterialPageRoute<dynamic>(
-            builder: (_) => FavoritesPage());
-      case '/settings':
-        return MaterialPageRoute<dynamic>(builder: (_) => SettingsPage());
+            builder: (_) => RecordingViewPage(data: args));
       default:
         return MaterialPageRoute<dynamic>(builder: (_) => ErrorPage());
     }

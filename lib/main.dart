@@ -1,24 +1,50 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
-import 'package:musicly_app/favorites_page.dart';
-import 'package:musicly_app/home_page.dart';
+import 'package:musicly_app/views/favorites_page.dart';
+import 'package:musicly_app/views/home_page.dart';
 import 'package:musicly_app/route_generator.dart';
 import 'package:back_button_interceptor/back_button_interceptor.dart';
-import 'package:musicly_app/search_page.dart';
-import 'package:musicly_app/settings_page.dart';
+import 'package:musicly_app/views/search_page.dart';
+import 'package:musicly_app/views/settings_page.dart';
+import 'package:provider/provider.dart';
+import 'package:musicly_app/providers/auth_provider.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider(
+      create: (_) => Auth(),
+    )
+  ], child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(primarySwatch: Colors.lightBlue),
+      theme: ThemeData(
+        primarySwatch: Colors.lightBlue,
+        backgroundColor: const Color(0xFF282B32),
+        bottomNavigationBarTheme: BottomNavigationBarThemeData(
+          backgroundColor: const Color(0xFF33353D),
+          selectedItemColor: Colors.lightBlueAccent.shade100,
+          unselectedItemColor: Colors.grey.shade400,
+        ),
+        appBarTheme: const AppBarTheme(
+            backgroundColor: Color(0xff3b3c45),
+            iconTheme: IconThemeData(
+              color: Color(0xffffd485),
+            )),
+        accentColor: Colors.lightBlue.shade300,
+        textButtonTheme: TextButtonThemeData(
+            style: TextButton.styleFrom(primary: Colors.lightBlue.shade100)),
+        // selectedItemColor: const Color(0xFF87DBEA),
+        brightness: Brightness.dark,
+      ),
       // title: 'Musicly',
+      themeMode: ThemeMode.dark,
       home: const ApplicationMainView(),
+      onGenerateRoute: RouteGenerator.generateRoute,
     );
   }
 }
@@ -33,20 +59,18 @@ class ApplicationMainView extends StatefulWidget {
 
 class _ApplicationMainView extends State<ApplicationMainView> {
   int _currentPageIndex = 0;
+  List<Widget> pageList = <Widget>[
+    HomePage(),
+    SearchPage(),
+    FavoritesPage(),
+    SettingsPage(),
+  ];
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold (
-      backgroundColor: const Color(0xFF282B32),
-      body: IndexedStack(
-        index: _currentPageIndex,
-        children: <Widget>[
-          HomePage(),
-          SearchPage(),
-          FavoritesPage(),
-          SettingsPage(),
-        ],
-      ),
+    return Scaffold(
+      backgroundColor: Theme.of(context).backgroundColor,
+      body: pageList[_currentPageIndex],
       bottomNavigationBar: buildBottomNavBar(),
       // resizeToAvoidBottomInset: false,
     );
@@ -59,35 +83,37 @@ class _ApplicationMainView extends State<ApplicationMainView> {
   }
 
   Widget buildBottomNavBar() {
-      // indexHistory = <int>[widget.currentNavBarIndex];
-      // BackButtonInterceptor.add(myInterceptor);
-      return SizedBox(
-        height: 50,
-        child: BottomNavigationBar(
-          unselectedFontSize: 11,
-          selectedFontSize: 11,
-          selectedItemColor: const Color(0xFF87DBEA),
-          unselectedItemColor: const Color(0xFFA0A3A3),
-          backgroundColor: const Color(0xFF33353D),
-          currentIndex: _currentPageIndex,
-          onTap: onNavBarTapped,
-          type: BottomNavigationBarType.fixed,
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.favorite), label: 'Favorites'),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.settings), label: 'Settings'),
-          ],
-        ),
-      );
-    }
+    // indexHistory = <int>[widget.currentNavBarIndex];
+    // BackButtonInterceptor.add(myInterceptor);
+    return SizedBox(
+      height: 50,
+      child: BottomNavigationBar(
+        unselectedFontSize: 11,
+        selectedFontSize: 11,
+        selectedItemColor:
+            Theme.of(context).bottomNavigationBarTheme.selectedItemColor,
+        unselectedItemColor:
+            Theme.of(context).bottomNavigationBarTheme.unselectedItemColor,
+        backgroundColor:
+            Theme.of(context).bottomNavigationBarTheme.backgroundColor,
+        currentIndex: _currentPageIndex,
+        onTap: onNavBarTapped,
+        type: BottomNavigationBarType.fixed,
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.favorite), label: 'Favorites'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.settings), label: 'Settings'),
+        ],
+      ),
+    );
+  }
 }
-
 
 // class MyHomePage extends StatefulWidget {
 //   const MyHomePage({Key key, this.title}) : super(key: key);

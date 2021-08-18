@@ -44,7 +44,11 @@ class SearchPage extends StatelessWidget {
     'Łydka grubasa',
     'Rammstein',
     'Iron Maiden',
-    'Led Zeppelin'
+    'Led Zeppelin',
+    'Łąki łan',
+    'Maroon5',
+    'Taylor Swift',
+    'Avril Lavigne',
   ];
 
   Widget buildFloatingSearchBar(BuildContext context) {
@@ -54,6 +58,7 @@ class SearchPage extends StatelessWidget {
       return FloatingSearchBar(
         // hint: 'Search...',
         height: 40,
+        // backgroundColor: const Color(0xFFFFFFFF), pole brightness w material theme jest winne zmiany koloru tego ziomeczka
         borderRadius: const BorderRadius.all(Radius.circular(20)),
         margins: EdgeInsets
             .fromLTRB(20, MediaQuery.of(context).viewPadding.top + 10, 20, 0),
