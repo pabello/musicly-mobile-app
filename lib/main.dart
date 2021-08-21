@@ -23,24 +23,51 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        primarySwatch: Colors.lightBlue,
-        backgroundColor: const Color(0xFF282B32),
-        bottomNavigationBarTheme: BottomNavigationBarThemeData(
-          backgroundColor: const Color(0xFF33353D),
-          selectedItemColor: Colors.lightBlueAccent.shade100,
-          unselectedItemColor: Colors.grey.shade400,
-        ),
-        appBarTheme: const AppBarTheme(
-            backgroundColor: Color(0xff3b3c45),
-            iconTheme: IconThemeData(
-              color: Color(0xffffd485),
-            )),
-        accentColor: Colors.lightBlue.shade300,
-        textButtonTheme: TextButtonThemeData(
-            style: TextButton.styleFrom(primary: Colors.lightBlue.shade100)),
-        // selectedItemColor: const Color(0xFF87DBEA),
-        brightness: Brightness.dark,
-      ),
+          primarySwatch: Colors.lightBlue,
+          backgroundColor: const Color(0xFF282B32),
+          bottomNavigationBarTheme: BottomNavigationBarThemeData(
+            backgroundColor: const Color(0xFF33353D),
+            selectedItemColor: Colors.lightBlueAccent.shade100,
+            unselectedItemColor: Colors.grey.shade400,
+          ),
+          appBarTheme: const AppBarTheme(
+              backgroundColor: Color(0xff3b3c45),
+              iconTheme: IconThemeData(
+                color: Color(0xffffd485),
+              )),
+          accentColor: Colors.lightBlue.shade300,
+          textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(primary: Colors.lightBlue.shade100)),
+          // selectedItemColor: const Color(0xFF87DBEA),
+          brightness: Brightness.dark,
+          snackBarTheme: const SnackBarThemeData(
+            contentTextStyle: TextStyle(color: Colors.white),
+            backgroundColor: Color(0xFF4D4D50),
+            // backgroundColor: Color(0xFF3B3C45),
+            behavior: SnackBarBehavior.floating,
+          ),
+          textTheme: TextTheme(
+            headline1:
+                GoogleFonts.lobsterTwo(fontSize: 30, color: Colors.white),
+            headline2:
+                GoogleFonts.lobsterTwo(fontSize: 24, color: Colors.white),
+            headline3:
+                GoogleFonts.lobsterTwo(fontSize: 22, color: Colors.white),
+            headline4:
+                GoogleFonts.lobsterTwo(fontSize: 20, color: Colors.white),
+            headline5: GoogleFonts.comfortaa(
+                fontSize: 17, color: Colors.white, letterSpacing: -.5),
+            subtitle1: GoogleFonts.comfortaa(fontSize: 13, color: Colors.white),
+            subtitle2: GoogleFonts.comfortaa(
+                fontSize: 12, color: const Color(0xffffd485)),
+            bodyText1: GoogleFonts.comfortaa(fontSize: 13, color: Colors.white),
+            bodyText2: GoogleFonts.comfortaa(
+                fontSize: 10, color: const Color(0xffffd485)),
+            button: GoogleFonts.comfortaa(
+                fontSize: 12,
+                color: Colors.lightBlueAccent.shade100,
+                letterSpacing: -1),
+          )),
       // title: 'Musicly',
       themeMode: ThemeMode.dark,
       home: const ApplicationMainView(),

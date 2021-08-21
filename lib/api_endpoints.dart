@@ -24,7 +24,7 @@ class ApiEndpoints {
   static const String deleteFromPlaylist = '$_protocol://$_address/api/playlistMusic/';
   static const String deletePlaylist = '$_protocol://$_address/api/playlist/';
   static const String userMusicList = '$_protocol://$_address/api/userMusic/';
-  static const String addMusicReaction = '$_protocol://$_address/api/userMusic/';
+  static const String musicReaction = '$_protocol://$_address/api/userMusic/';
   static const String recommendationList = '$_protocol://$_address/api/recommendations/';
   static const String nextRecommendation = '$_protocol://$_address/api/recommendation/';
 }
