@@ -8,6 +8,9 @@ import 'package:musicly_app/views/settings_page.dart';
 import 'package:musicly_app/views/favorites_page.dart';
 import 'package:musicly_app/views/recording_view.dart';
 import 'package:musicly_app/views/artist_view.dart';
+import 'package:musicly_app/views/user_music_view.dart';
+import 'package:musicly_app/views/playlist_list_view.dart';
+import 'package:musicly_app/views/playlist_view.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -22,6 +25,15 @@ class RouteGenerator {
       case '/artist':
         return MaterialPageRoute<dynamic>(
           builder: (_) => ArtistViewPage(data: args));
+      case '/userMusic':
+        return MaterialPageRoute<dynamic>(
+          builder: (_) => UserMusicViewPage(data: args));
+      case '/playlistsList':
+        return MaterialPageRoute<dynamic>(
+          builder: (_) => PlaylistListViewPage(data: args));
+      case '/playlist':
+        return MaterialPageRoute<dynamic>(
+          builder: (_) => PlaylistViewPage(data: args));
       default:
         return MaterialPageRoute<dynamic>(builder: (_) => ErrorPage());
     }

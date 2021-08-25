@@ -38,12 +38,32 @@ class ArtistSimpleDTO {
   String get stageName => _stageName;
 }
 
-class LikeStatusDTO {
-  LikeStatusDTO(this._recordingId, this._likeStatus);
+class PlaylistSimpleDTO {
+  PlaylistSimpleDTO(this._id, this._name, this._length, this._musicCount);
 
-  final int _recordingId;
-  final int _likeStatus;
+  final int _id, _length, _musicCount;
+  final String _name;
 
-  int get recordingId => _recordingId;
-  int get likeStatus => _likeStatus;
+  int get id => _id;
+  int get length => _length;
+  int get musicCount => _musicCount;
+  String get name => _name;
+
+  int getLengthMinutes() {
+    return ((_length / 1000).floor() / 60).floor();
+  }
+
+  int getLengthRemainingSeconds() {
+    return ((_length / 1000).floor() % 60).floor();
+  }
+
+  String lengthStringParse() {
+    if(_length != null) {
+      final String strLength = '${getLengthMinutes()}:'
+          '${getLengthRemainingSeconds().toString().padLeft(2, '0')}';
+      return strLength;
+    } else {
+      return 'unknown';
+    }
+  }
 }

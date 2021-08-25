@@ -66,7 +66,8 @@ class MyApp extends StatelessWidget {
             button: GoogleFonts.comfortaa(
                 fontSize: 12,
                 color: Colors.lightBlueAccent.shade100,
-                letterSpacing: -1),
+                letterSpacing: .1,
+                fontWeight: FontWeight.w600),
           )),
       // title: 'Musicly',
       themeMode: ThemeMode.dark,

@@ -16,7 +16,7 @@ class ApiEndpoints {
   static const String artistDetails = '$_protocol://$_address/api/artist/';
   static const String recordingList = '$_protocol://$_address/api/recording/';
   static const String recordingDetails = '$_protocol://$_address/api/recording/';
-  static const String playlistList = '$_protocol://$_address/api/playlist/';
+  static const String playlistList = '$_protocol://$_address/api/playlist/filtered_list/';
   static const String playlistDetails = '$_protocol://$_address/api/playlist/';
   static const String createPlaylist = '$_protocol://$_address/api/playlist/';
   static const String addToPlaylist = '$_protocol://$_address/api/playlistMusic/';

@@ -14,13 +14,13 @@ import 'package:musicly_app/providers/auth_provider.dart';
 import 'package:musicly_app/errors.dart';
 
 class RecordingViewPage extends StatelessWidget {
-  /*const*/ RecordingViewPage({@required this.data});
+  const RecordingViewPage({@required this.data});
 
   final Object data;
 
   @override
   Widget build(BuildContext context) {
-    RecordingSimpleDTO recording = data as RecordingSimpleDTO;
+    final RecordingSimpleDTO recording = data as RecordingSimpleDTO;
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -43,7 +43,7 @@ class RecordingViewPage extends StatelessWidget {
                 style: Theme.of(context).textTheme.subtitle2),
           ])),
           const SizedBox(height: 10),
-          _getLikeStatusButtons(context, recording.id),
+          LikeStatusButtons(context: context, recordingId: recording.id),
           const SizedBox(height: 20),
           Text(
             'Wykonawcy',
@@ -72,120 +72,105 @@ class LikeStatusButtons extends StatefulWidget {
 
 class _LikeStatusButtonsState extends State<LikeStatusButtons> {
   int _likeStatus = 0;
-
-  @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    throw UnimplementedError();
-  }
-}
-
-Widget _getLikeStatusButtons(BuildContext context, int recordingId) {
-  Future<http.Response> _setLikeStatus(int recordingId, int likeStatus) {
-    final Map<String, int> data = <String, int>{'like_status': likeStatus};
-    final Uri url = Uri.parse('${ApiEndpoints.musicReaction}$recordingId/');
-    final Future<http.Response> future = http.post(url,
-        headers: <String, String>{
-          HttpHeaders.authorizationHeader:
-              Provider.of<Auth>(context, listen: false).accessToken,
-          HttpHeaders.contentTypeHeader: 'application/json'
-        },
-        body: jsonEncode(data));
-
-    return future;
-  }
-
-  Future<http.Response> _fetchRecordingLikeStatus(
-      BuildContext context, int recordingId) {
-    final Uri url = Uri.parse('${ApiEndpoints.musicReaction}/$recordingId/');
-    final Future<http.Response> future = http.get(url,
-        headers: <String, String>{
-          HttpHeaders.authorizationHeader: context.watch<Auth>().accessToken
-        });
-    return future;
-  }
-
   final Map<int, Color> _likeColors = <int, Color>{
     -1: Colors.red.shade300,
     0: Colors.grey.shade500,
     1: const Color(0xff93ec7d),
   };
 
-  // TODO zmiana koloru przycisków in real time jak się klinkie!
-  // może wymagać przerobienia na statefull widget albo użycie providera
-  return FutureBuilder<http.Response>(
-      future: _fetchRecordingLikeStatus(context, recordingId),
-      builder: (BuildContext context, AsyncSnapshot<http.Response> snapshot) {
-        LikeStatusDTO likeStatus;
-        if (snapshot.connectionState == ConnectionState.done) {
-          if (snapshot.data.statusCode == 200) {
-            final dynamic response =
-                jsonDecode(utf8.decode(snapshot.data.body.runes.toList()));
-            likeStatus = LikeStatusDTO(response['recording_id'] as int,
-                response['like_status'] as int);
-          } else {
-            likeStatus = LikeStatusDTO(recordingId, 0);
-            if (snapshot.data.statusCode != 404) {
-              SchedulerBinding.instance.addPostFrameCallback((_) {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  backgroundColor:
-                      Theme.of(context).snackBarTheme.backgroundColor,
-                  behavior: SnackBarBehavior.floating,
-                  margin: const EdgeInsets.all(10),
-                  content: const Text('Błąd połączenia z serwerem'),
-                  duration: const Duration(milliseconds: 3000),
-                ));
-              });
-            }
-          }
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              OutlinedButton(
-                onPressed: () => _setLikeStatus(
-                    recordingId, likeStatus.likeStatus == 1 ? 0 : 1),
-                style: OutlinedButton.styleFrom(
-                    primary: _likeColors[likeStatus.likeStatus > 0 ? 1 : 0],
-                    side: BorderSide(
-                        color: _likeColors[likeStatus.likeStatus > 0 ? 1 : 0])),
-                child: const Text('Lubię to'),
-              ),
-              const SizedBox(width: 10),
-              OutlinedButton(
-                onPressed: () => _setLikeStatus(
-                    recordingId, likeStatus.likeStatus == -1 ? 0 : -1),
-                style: OutlinedButton.styleFrom(
-                    primary: _likeColors[likeStatus.likeStatus < 0 ? -1 : 0],
-                    side: BorderSide(
-                        color:
-                            _likeColors[likeStatus.likeStatus < 0 ? -1 : 0])),
-                child: const Text('Nie lubię'),
-              ),
-            ],
-          );
-        } else {
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              OutlinedButton(
-                onPressed: () {},
-                style: OutlinedButton.styleFrom(
-                    primary: _likeColors[0],
-                    side: BorderSide(color: _likeColors[0])),
-                child: const Text('Lubię to'),
-              ),
-              const SizedBox(width: 10),
-              OutlinedButton(
-                onPressed: () {},
-                style: OutlinedButton.styleFrom(
-                    primary: _likeColors[0],
-                    side: BorderSide(color: _likeColors[0])),
-                child: const Text('Nie lubię'),
-              ),
-            ],
-          );
-        }
+  void updateLikeStatus(int likeStatus) {
+    setState(() {
+      _likeStatus = likeStatus;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Future<http.Response> _fetchRecordingLikeStatus(
+        BuildContext context, int recordingId) {
+      final Uri url = Uri.parse('${ApiEndpoints.musicReaction}/$recordingId/');
+      final Future<http.Response> future = http.get(url,
+          headers: <String, String>{
+            HttpHeaders.authorizationHeader: context.watch<Auth>().accessToken
+          });
+      return future;
+    }
+
+    Future<http.Response> _setLikeStatus(int recordingId, int likeStatus) {
+      final Map<String, int> data = <String, int>{'like_status': likeStatus};
+      final Uri url = Uri.parse('${ApiEndpoints.musicReaction}$recordingId/');
+      final Future<http.Response> future = http.post(url,
+          headers: <String, String>{
+            HttpHeaders.authorizationHeader:
+                Provider.of<Auth>(context, listen: false).accessToken,
+            HttpHeaders.contentTypeHeader: 'application/json'
+          },
+          body: jsonEncode(data));
+      return future;
+    }
+
+    void _showSnackBar(String message) {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          backgroundColor: Theme.of(context).snackBarTheme.backgroundColor,
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.all(10),
+          content: Text(message),
+          duration: const Duration(milliseconds: 3000),
+        ));
       });
+    }
+
+    void _likeButtonClick(int likeStatus) {
+      _setLikeStatus(widget.recordingId, likeStatus)
+          .then((http.Response response) => <void>{
+                if (response.statusCode == 200)
+                  <void>{updateLikeStatus(likeStatus)}
+                else { print('error code ${response.statusCode}') }
+              });
+    }
+
+    _fetchRecordingLikeStatus(context, widget.recordingId)
+        .then((http.Response response) => <void>{
+          if (response.statusCode == 200)
+            <void>{
+              updateLikeStatus(int.parse(
+                  jsonDecode(response.body)['like_status'].toString()))
+            }
+          else if (response.statusCode != 404)
+            <void>{
+              <void>{_showSnackBar('Błąd połączenia z serwerem.')}
+            }
+        }); // TODO warto by dodać jakiś error catch, tylko jakoś mi nie chce działać
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        OutlinedButton.icon(
+          icon: const Icon(Icons.thumb_up_outlined),
+          label: const Text('Lubię to'),
+          onPressed: () => _likeButtonClick(_likeStatus == 1 ? 0 : 1),
+          style: OutlinedButton.styleFrom(
+              primary: _likeColors[_likeStatus > 0 ? 1 : 0],
+              side: BorderSide(color: _likeColors[_likeStatus > 0 ? 1 : 0])),
+        ),
+        const SizedBox(width: 10),
+        OutlinedButton(
+          onPressed: () => _likeButtonClick(_likeStatus == -1 ? 0 : -1),
+          style: OutlinedButton.styleFrom(
+              primary: _likeColors[_likeStatus < 0 ? -1 : 0],
+              side: BorderSide(color: _likeColors[_likeStatus < 0 ? -1 : 0])),
+          child: Row(
+            children: const <Widget>[
+              Text('Nie lubię'),
+              SizedBox(width: 8),
+              Icon(Icons.thumb_down_outlined)
+            ],
+          ),
+        ),
+      ],
+    );
+  }
 }
 
 String _getRecordingLength(RecordingSimpleDTO recording) {
