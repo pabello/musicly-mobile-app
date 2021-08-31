@@ -1,20 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
+import 'package:back_button_interceptor/back_button_interceptor.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:provider/provider.dart';
+
+import 'package:musicly_app/providers/navbar_state_provider.dart';
+import 'package:musicly_app/views/search_page.dart';
+import 'package:musicly_app/views/settings_page.dart';
+import 'package:musicly_app/providers/auth_provider.dart';
+import 'package:musicly_app/views/login_view.dart';
 import 'package:musicly_app/views/favorites_page.dart';
 import 'package:musicly_app/views/home_page.dart';
 import 'package:musicly_app/route_generator.dart';
-import 'package:back_button_interceptor/back_button_interceptor.dart';
-import 'package:musicly_app/views/search_page.dart';
-import 'package:musicly_app/views/settings_page.dart';
-import 'package:provider/provider.dart';
-import 'package:musicly_app/providers/auth_provider.dart';
 
 void main() {
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(
       create: (_) => Auth(),
-    )
+    ),
+    ChangeNotifierProvider(
+      create: (_) => NavBarState(),
+    ),
   ], child: MyApp()));
 }
 
@@ -86,7 +93,6 @@ class ApplicationMainView extends StatefulWidget {
 }
 
 class _ApplicationMainView extends State<ApplicationMainView> {
-  int _currentPageIndex = 0;
   List<Widget> pageList = <Widget>[
     HomePage(),
     SearchPage(),
@@ -96,18 +102,25 @@ class _ApplicationMainView extends State<ApplicationMainView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).backgroundColor,
-      body: pageList[_currentPageIndex],
-      bottomNavigationBar: buildBottomNavBar(),
-      // resizeToAvoidBottomInset: false,
+    final bool loggedIn = Provider.of<Auth>(context).accessToken != '';
+
+    return KeyboardVisibilityProvider(
+      child: loggedIn
+          ? Scaffold(
+              resizeToAvoidBottomInset: false,
+              backgroundColor: Theme.of(context).backgroundColor,
+              body:
+                  pageList[Provider.of<NavBarState>(context).currentPageIndex],
+              bottomNavigationBar: buildBottomNavBar(),
+              // resizeToAvoidBottomInset: false,
+            )
+          : LoginViewPage(),
     );
   }
 
+  // ignore: use_setters_to_change_properties
   void onNavBarTapped(int index) {
-    setState(() {
-      _currentPageIndex = index;
-    });
+    Provider.of<NavBarState>(context, listen: false).currentPageIndex = index;
   }
 
   Widget buildBottomNavBar() {
@@ -124,7 +137,7 @@ class _ApplicationMainView extends State<ApplicationMainView> {
             Theme.of(context).bottomNavigationBarTheme.unselectedItemColor,
         backgroundColor:
             Theme.of(context).bottomNavigationBarTheme.backgroundColor,
-        currentIndex: _currentPageIndex,
+        currentIndex: Provider.of<NavBarState>(context).currentPageIndex,
         onTap: onNavBarTapped,
         type: BottomNavigationBarType.fixed,
         items: const <BottomNavigationBarItem>[

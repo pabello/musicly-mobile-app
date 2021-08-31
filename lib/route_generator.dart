@@ -11,6 +11,7 @@ import 'package:musicly_app/views/artist_view.dart';
 import 'package:musicly_app/views/user_music_view.dart';
 import 'package:musicly_app/views/playlist_list_view.dart';
 import 'package:musicly_app/views/playlist_view.dart';
+import 'package:musicly_app/views/change_password_view.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -34,6 +35,10 @@ class RouteGenerator {
       case '/playlist':
         return MaterialPageRoute<dynamic>(
           builder: (_) => PlaylistViewPage(data: args));
+      case '/changePassword':
+        final bool isLoggedIn = settings.arguments as bool;
+        return MaterialPageRoute<dynamic>(
+          builder: (_) => ChangePasswordView(isLoggedIn: isLoggedIn));
       default:
         return MaterialPageRoute<dynamic>(builder: (_) => ErrorPage());
     }

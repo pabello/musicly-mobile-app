@@ -22,19 +22,6 @@ class PlaylistListViewPage extends StatefulWidget {
 class _PlaylistListViewPageState extends State<PlaylistListViewPage> {
   @override
   Widget build(BuildContext context) {
-    Future<http.Response> _fetchPlaylists() {
-      final Map<String, String> filters = <String, String>{
-        'chronological_order': 'desc',
-      };
-      final Uri url = Uri.parse(ApiEndpoints.playlistList);
-      final Future<http.Response> future = http.post(url,
-          headers: <String, String>{
-            HttpHeaders.authorizationHeader: context.watch<Auth>().accessToken,
-            HttpHeaders.contentTypeHeader: 'application/json'
-          },
-          body: jsonEncode(filters));
-      return future;
-    }
 
     final ScrollController _scrollController = ScrollController();
     const String emptyListErrorMessage =
@@ -60,11 +47,11 @@ class _PlaylistListViewPageState extends State<PlaylistListViewPage> {
           Text(pageTitle, style: Theme.of(context).textTheme.headline1),
           const SizedBox(height: 20),
           FutureBuilder<http.Response>(
-            future: _fetchPlaylists(),
+            future: fetchPlaylists(context),
             builder:
                 (BuildContext context, AsyncSnapshot<http.Response> snapshot) {
               if (snapshot.connectionState == ConnectionState.done) {
-                if (snapshot.data.statusCode == 200) {
+                if (!snapshot.hasError && snapshot.data.statusCode == 200) {
                   final dynamic content = jsonDecode(
                       utf8.decode(snapshot.data.body.runes.toList()));
                   if (content.length as int > 0) {
@@ -121,4 +108,18 @@ class _PlaylistListViewPageState extends State<PlaylistListViewPage> {
       ),
     );
   }
+}
+
+Future<http.Response> fetchPlaylists(BuildContext context,) {
+  final Map<String, String> filters = <String, String>{
+    'chronological_order': 'desc',
+  };
+  final Uri url = Uri.parse(ApiEndpoints.playlistList);
+  final Future<http.Response> future = http.post(url,
+      headers: <String, String>{
+        HttpHeaders.authorizationHeader: context.watch<Auth>().accessToken,
+        HttpHeaders.contentTypeHeader: 'application/json'
+      },
+      body: jsonEncode(filters));
+  return future;
 }

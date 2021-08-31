@@ -21,27 +21,26 @@ environment:
   sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
+  cupertino_icons: ^1.0.2
   flutter:
     sdk: flutter
 
-
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.2
-
 dev_dependencies:
+  animations: ^2.0.1
+  back_button_interceptor: ^5.0.1
+  flutter_icons: ^1.1.0
+  flutter_keyboard_visibility: ^5.0.3
+  flutter_launcher_icons: ^0.9.0
   flutter_test:
     sdk: flutter
-  flutter_launcher_icons: ^0.9.0
+  font_awesome_flutter: ^9.1.0
+  form_field_validator: ^1.1.0
   google_fonts: ^2.1.0
+  http: ^0.13.3
+  keyboard_visibility: ^0.5.6
   lint: ^1.5.3
   material_floating_search_bar: ^0.3.4
-  back_button_interceptor: ^5.0.1
-  font_awesome_flutter: ^9.1.0
-  http: ^0.13.3
-  provider: ^5.0.0
-  animations: ^2.0.1
-  flutter_icons: ^1.1.0
+  provider: ^6.0.0
 
 flutter_icons:
   android: "launcher_icon"
@@ -52,13 +51,7 @@ flutter_icons:
 
 # The following section is specific to Flutter.
 flutter:
-
-  # The following line ensures that the Material Icons font is
-  # included with your application, so that you can use the icons in
-  # the material Icons class.
   uses-material-design: true
-
-  # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/
   #     - images/a_dot_ham.jpeg

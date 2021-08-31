@@ -1,19 +1,16 @@
 // import 'dart:convert' as convert;
 
-// import 'dart:core';
+import 'dart:convert' show utf8, jsonDecode;
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert' show utf8, jsonDecode;
-
 import 'package:musicly_app/api_endpoints.dart';
 import 'package:musicly_app/dto_classes.dart';
-import 'package:musicly_app/providers/auth_provider.dart';
 import 'package:musicly_app/errors.dart';
+import 'package:musicly_app/providers/auth_provider.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatelessWidget {
   final GlobalKey welcomeKey = GlobalKey();
@@ -44,6 +41,7 @@ class HomePage extends StatelessWidget {
             const HomeScreenPanelOption(
               imageAsset: AssetImage('assets/images/playlisty.jpg'),
               caption: 'Playlisty',
+              viewPrefix: '/playlistsList',
             ),
           ],
         ),
@@ -98,7 +96,7 @@ class HomePage extends StatelessWidget {
       final Uri url = Uri.parse(ApiEndpoints.recommendationList);
       final Future<http.Response> response =
           http.get(url, headers: <String, String>{
-        HttpHeaders.authorizationHeader: context.watch<Auth>().accessToken,
+        HttpHeaders.authorizationHeader: Provider.of<Auth>(context).accessToken,
       });
       return response;
     }
@@ -107,20 +105,21 @@ class HomePage extends StatelessWidget {
         future: _fetchRecommendations(),
         builder: (BuildContext context, AsyncSnapshot<http.Response> snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            if (snapshot.data.statusCode == 200) {
+            if (!snapshot.hasError && snapshot.data.statusCode == 200) {
               if (snapshot.data.body.runtimeType == String) {
                 final List<Widget> recommendations = <Widget>[];
                 final dynamic content =
-                    jsonDecode(utf8.decode(snapshot.data.body.runes.toList()));
+                jsonDecode(utf8.decode(snapshot.data.body.runes.toList()));
                 for (final dynamic r in content.sublist(
                   0,
                 )) {
                   final RecordingSimpleDTO recording = RecordingSimpleDTO(
-                      r['id'] as int, r['title'] as String, r['length'] as int);
+                      r['id'] as int, r['title'] as String,
+                      r['length'] as int);
 
                   recommendations.add(Padding(
                     padding:
-                        const EdgeInsets.symmetric(horizontal: 15, vertical: 1),
+                    const EdgeInsets.symmetric(horizontal: 15, vertical: 1),
                     child: Stack(children: <Widget>[
                       ListTile(
                         // tileColor: Theme.of(context)
@@ -137,7 +136,10 @@ class HomePage extends StatelessWidget {
                         ),
                         subtitle: Text(
                           recording.lengthStringParse(),
-                          style: Theme.of(context).textTheme.bodyText2,
+                          style: Theme
+                              .of(context)
+                              .textTheme
+                              .bodyText2,
                         ),
                         visualDensity: const VisualDensity(vertical: -4),
                         minVerticalPadding: 10,
@@ -145,14 +147,15 @@ class HomePage extends StatelessWidget {
                       ),
                       Positioned.fill(
                           child: Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.of(context)
-                                .pushNamed('/recording', arguments: recording);
-                          },
-                        ),
-                      )),
+                            color: Colors.transparent,
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.of(context)
+                                    .pushNamed(
+                                    '/recording', arguments: recording);
+                              },
+                            ),
+                          )),
                     ]),
                   ));
                 }
@@ -168,7 +171,7 @@ class HomePage extends StatelessWidget {
                   'Nie udało się połączyć z serwerem...');
             }
           } else {
-            return const CircularProgressIndicator();
+            return const Center(child: CircularProgressIndicator());
           }
         });
   }
@@ -179,11 +182,13 @@ class HomeScreenPanelOption extends StatelessWidget {
     @required this.imageAsset,
     @required this.caption,
     this.scrollPositionKey,
+    this.viewPrefix
   });
 
   final AssetImage imageAsset;
   final String caption;
   final GlobalKey scrollPositionKey;
+  final String viewPrefix;
 
   @override
   Widget build(BuildContext context) {
@@ -240,6 +245,8 @@ class HomeScreenPanelOption extends StatelessWidget {
                   Scrollable.ensureVisible(scrollPositionKey.currentContext,
                       curve: Curves.easeInOut,
                       duration: const Duration(milliseconds: 300));
+                } else if (viewPrefix != null) {
+                  Navigator.of(context).pushNamed(viewPrefix);
                 }
               },
             ),

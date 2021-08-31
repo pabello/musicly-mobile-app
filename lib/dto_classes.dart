@@ -6,7 +6,9 @@ class RecordingSimpleDTO {
   final int _length;
 
   int get id => _id;
+
   String get title => _title;
+
   int get length => _length;
 
   int getLengthMinutes() {
@@ -18,7 +20,7 @@ class RecordingSimpleDTO {
   }
 
   String lengthStringParse() {
-    if(_length != null) {
+    if (_length != null) {
       final String strLength = '${getLengthMinutes()}:'
           '${getLengthRemainingSeconds().toString().padLeft(2, '0')}';
       return strLength;
@@ -35,33 +37,41 @@ class ArtistSimpleDTO {
   final String _stageName;
 
   int get id => _id;
+
   String get stageName => _stageName;
 }
 
 class PlaylistSimpleDTO {
-  PlaylistSimpleDTO(this._id, this._name, this._length, this._musicCount);
+  PlaylistSimpleDTO(this._id, this.name, this.length, this.musicCount);
 
-  final int _id, _length, _musicCount;
-  final String _name;
+  final int _id;
+  int length, musicCount;
+  String name;
 
   int get id => _id;
-  int get length => _length;
-  int get musicCount => _musicCount;
-  String get name => _name;
 
   int getLengthMinutes() {
-    return ((_length / 1000).floor() / 60).floor();
+    return ((length / 1000).floor() / 60).floor();
   }
 
   int getLengthRemainingSeconds() {
-    return ((_length / 1000).floor() % 60).floor();
+    return ((length / 1000).floor() % 60).floor();
   }
 
   String lengthStringParse() {
-    if(_length != null) {
-      final String strLength = '${getLengthMinutes()}:'
-          '${getLengthRemainingSeconds().toString().padLeft(2, '0')}';
-      return strLength;
+    if (length != null) {
+      int hours;
+      int minutes = getLengthMinutes();
+      if (minutes > 120) {
+        hours = (minutes / 60).floor();
+        minutes -= hours * 60;
+      }
+      String lengthStr = '';
+      if (hours != null) {
+        lengthStr += '$hours godz. ';
+      }
+      return '$lengthStr${'$minutes min.'} '
+          '${'${getLengthRemainingSeconds().toString().padLeft(2, '0')} sek.'}';
     } else {
       return 'unknown';
     }

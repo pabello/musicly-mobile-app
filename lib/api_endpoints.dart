@@ -1,6 +1,6 @@
 class ApiEndpoints {
   static const String _protocol = 'http';
-  static const String _address = '10.0.2.2:8000';
+  static const String _address = '10.0.2.2:8001';
   // static const String _address = '127.0.0.1:8000';
 
   static const String register = '$_protocol://$_address/api/register/';

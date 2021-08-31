@@ -5,13 +5,15 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_icons/flutter_icons.dart';
 import 'package:musicly_app/dto_classes.dart';
 import 'package:http/http.dart' as http;
+import 'package:musicly_app/utils.dart';
 import 'package:provider/provider.dart';
 import 'package:musicly_app/api_endpoints.dart';
 import 'package:musicly_app/providers/auth_provider.dart';
 import 'package:musicly_app/errors.dart';
+import 'package:musicly_app/views/playlist_list_view.dart' show fetchPlaylists;
 
 class RecordingViewPage extends StatelessWidget {
   const RecordingViewPage({@required this.data});
@@ -33,15 +35,43 @@ class RecordingViewPage extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: <Widget>[
-          RichText(
-              text: TextSpan(children: <TextSpan>[
-            TextSpan(
-                text: recording.title,
-                style: Theme.of(context).textTheme.headline1),
-            TextSpan(
-                text: _getRecordingLength(recording),
-                style: Theme.of(context).textTheme.subtitle2),
-          ])),
+          SizedBox(
+            width: MediaQuery.of(context).size.width,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Flexible(
+                  child: RichText(
+                      text: TextSpan(children: <TextSpan>[
+                    TextSpan(
+                        text: recording.title,
+                        style: Theme.of(context).textTheme.headline1),
+                    TextSpan(
+                        text: _getRecordingLength(recording),
+                        style: Theme.of(context).textTheme.subtitle2),
+                  ])),
+                ),
+                Container(
+                  margin: const EdgeInsets.only(left: 10),
+                  transform: Matrix4.translationValues(0, -5, 0),
+                  child: PopupMenuButton<Function>(
+                    icon: const Icon(Entypo.dots_three_horizontal),
+                    offset: const Offset(-12, 12),
+                    onSelected: (Function function) => function(),
+                    itemBuilder: (BuildContext context) {
+                      final List<PopupMenuEntry<Function>> actions =
+                          <PopupMenuEntry<Function>>[];
+                      actions.add(PopupMenuItem<Function>(
+                        value: () => choosePlaylistDialog(context, recording),
+                        child: const Text('Dodaj do playlisty'),
+                      ));
+                      return actions;
+                    },
+                  ),
+                )
+              ],
+            ),
+          ),
           const SizedBox(height: 10),
           LikeStatusButtons(context: context, recordingId: recording.id),
           const SizedBox(height: 20),
@@ -56,6 +86,82 @@ class RecordingViewPage extends StatelessWidget {
       ),
     );
   }
+
+  void choosePlaylistDialog(
+      BuildContext context, RecordingSimpleDTO recording) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return getPlaylistsDialogOptions(context, recording);
+        });
+  }
+}
+
+Widget getPlaylistsDialogOptions(
+    BuildContext context, RecordingSimpleDTO recording) {
+  return FutureBuilder<http.Response>(
+    future: fetchPlaylists(context),
+    builder: (BuildContext context, AsyncSnapshot<http.Response> snapshot) {
+        final List<SimpleDialogOption> dialogOptions = <SimpleDialogOption>[];
+        if (snapshot.connectionState == ConnectionState.done) {
+          if (!snapshot.hasError) {
+            if (snapshot.data.statusCode == 200) {
+              final dynamic content = jsonDecode(utf8.decode(snapshot.data.bodyBytes));
+              if (content.length > 0 != null) {
+                for (final dynamic object in content) {
+                  dialogOptions.add(SimpleDialogOption(
+                    onPressed: () => addRecordingToPlaylist(
+                        context, recording.id, object['id'] as int),
+                    child: Align(alignment: Alignment.centerRight,
+                        child: Text(object['name'].toString(), style: Theme.of(context).textTheme.subtitle2,)),
+                  ));
+                }
+                return SimpleDialog(
+                  title: const Text('Wybierz playlistę'),
+                  children: dialogOptions,
+                );
+              }
+            } else if (snapshot.data.statusCode == 404) {
+              showSnackBar(context, 'Nie posiadasz żadnych playlist...');
+            } else {
+              showSnackBar(context, 'Nie udało się połączyć z serwerem...');
+            }
+          } else {
+            showSnackBar(context, 'Nie udało się połączyć z serwerem...');
+          }
+        } else {
+          return const Center(child: CircularProgressIndicator());
+        }
+        return const SizedBox();
+    }
+  );
+}
+
+void addRecordingToPlaylist(
+    BuildContext context, int recordingId, int playlistId) {
+  final Map<String, int> data = <String, int>{
+    'playlist_id': playlistId,
+    'recording_id': recordingId
+  };
+  final Uri url = Uri.parse(ApiEndpoints.addToPlaylist);
+  final Future<http.Response> future = http.post(url,
+      headers: <String, String>{
+        HttpHeaders.authorizationHeader:
+            Provider.of<Auth>(context, listen: false).accessToken,
+        HttpHeaders.contentTypeHeader: 'application/json'
+      },
+      body: jsonEncode(data));
+
+  future.then((http.Response response) {
+    Navigator.of(context).pop();
+    if (response.statusCode == 201) {
+      showSnackBar(context, 'Dodano utwór do playlisty');
+    } else {
+      showSnackBar(context, 'Nie udało się dodać utworu do playlisty');
+    }
+  }).onError((error, StackTrace stackTrace) {
+    showSnackBar(context, 'Błąd połączenia z serwerem...');
+  });
 }
 
 class LikeStatusButtons extends StatefulWidget {
@@ -88,7 +194,7 @@ class _LikeStatusButtonsState extends State<LikeStatusButtons> {
   Widget build(BuildContext context) {
     Future<http.Response> _fetchRecordingLikeStatus(
         BuildContext context, int recordingId) {
-      final Uri url = Uri.parse('${ApiEndpoints.musicReaction}/$recordingId/');
+      final Uri url = Uri.parse('${ApiEndpoints.musicReaction}$recordingId/');
       final Future<http.Response> future = http.get(url,
           headers: <String, String>{
             HttpHeaders.authorizationHeader: context.watch<Auth>().accessToken
@@ -126,12 +232,14 @@ class _LikeStatusButtonsState extends State<LikeStatusButtons> {
           .then((http.Response response) => <void>{
                 if (response.statusCode == 200)
                   <void>{updateLikeStatus(likeStatus)}
-                else { print('error code ${response.statusCode}') }
+                else
+                  {print('error code ${response.statusCode}')}
               });
     }
 
-    _fetchRecordingLikeStatus(context, widget.recordingId)
-        .then((http.Response response) => <void>{
+    _fetchRecordingLikeStatus(context, widget.recordingId).then((http.Response
+            response) =>
+        <void>{
           if (response.statusCode == 200)
             <void>{
               updateLikeStatus(int.parse(
@@ -196,7 +304,7 @@ Widget _getRecordingArtists(BuildContext context, int recordingId) {
       future: _fetchArtists(),
       builder: (BuildContext context, AsyncSnapshot<http.Response> snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
-          if (snapshot.data.statusCode == 200) {
+          if (!snapshot.hasError && snapshot.data.statusCode == 200) {
             if (snapshot.data.body.runtimeType == String) {
               final List<Widget> artists = <Widget>[];
               final dynamic content =

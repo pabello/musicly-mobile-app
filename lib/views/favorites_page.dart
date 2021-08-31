@@ -132,7 +132,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
       future: _fetchFavorites(),
       builder: (BuildContext context, AsyncSnapshot<http.Response> snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
-          if (snapshot.data.statusCode == 200) {
+          if (!snapshot.hasError && snapshot.data.statusCode == 200) {
             final dynamic content =
                 jsonDecode(utf8.decode(snapshot.data.body.runes.toList()));
             if (content.length as int > 0) {
