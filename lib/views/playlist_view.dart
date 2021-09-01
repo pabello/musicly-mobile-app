@@ -60,11 +60,16 @@ class _PlaylistViewPageState extends State<PlaylistViewPage> {
         appBar: AppBar(
           title: Text(
             playlist.name,
-            style: Theme.of(context).textTheme.headline5,
+            style: Theme
+                .of(context)
+                .textTheme
+                .headline5,
           ),
           titleSpacing: 5,
         ),
-        backgroundColor: Theme.of(context).backgroundColor,
+        backgroundColor: Theme
+            .of(context)
+            .backgroundColor,
         body: Column(
           children: <Widget>[
             Expanded(
@@ -91,13 +96,13 @@ class _PlaylistViewPageState extends State<PlaylistViewPage> {
                     object['length'] as int));
               }
               return ReorderableListView.builder(
-                  // physics: const BouncingScrollPhysics(),
+                // physics: const BouncingScrollPhysics(),
                   itemCount: snapshot.data.length as int,
                   scrollController: scrollController,
                   onReorder: (int oldIndex, int newIndex) {
                     _changePlaylistPosition(
-                            snapshot.data[oldIndex]['association_id'] as int,
-                            newIndex)
+                        snapshot.data[oldIndex]['association_id'] as int,
+                        newIndex)
                         .then((http.Response response) {
                       if (response.statusCode == 200) {
                         if (oldIndex < newIndex) {
@@ -107,7 +112,7 @@ class _PlaylistViewPageState extends State<PlaylistViewPage> {
                           scrollController = ScrollController(
                               initialScrollOffset: scrollController.offset);
                           final RecordingSimpleDTO recording =
-                              playlistRecordings[oldIndex];
+                          playlistRecordings[oldIndex];
                           playlistRecordings.removeAt(oldIndex);
                           playlistRecordings.insert(newIndex, recording);
                         });
@@ -120,9 +125,9 @@ class _PlaylistViewPageState extends State<PlaylistViewPage> {
                   header: getPlaylistPageHeader(),
                   itemBuilder: (BuildContext context, int index) {
                     final int associationId =
-                        snapshot.data[index]['association_id'] as int;
+                    snapshot.data[index]['association_id'] as int;
                     final RecordingSimpleDTO recording =
-                        playlistRecordings[index];
+                    playlistRecordings[index];
                     return Padding(
                       key: ValueKey<int>(associationId),
                       padding: const EdgeInsets.symmetric(
@@ -145,8 +150,9 @@ class _PlaylistViewPageState extends State<PlaylistViewPage> {
                                 FontAwesome.trash_o,
                                 color: Colors.grey.shade400,
                               ),
-                              onPressed: () => deleteRecordingDialog(
-                                  recording, associationId, index)),
+                              onPressed: () =>
+                                  deleteRecordingDialog(
+                                      recording, associationId, index)),
                           title: Text(recording.title),
                           visualDensity: const VisualDensity(vertical: -4),
                           minVerticalPadding: 10,
@@ -180,7 +186,9 @@ class _PlaylistViewPageState extends State<PlaylistViewPage> {
     final Uri url = Uri.parse('${ApiEndpoints.playlistDetails}${playlist.id}/');
     final Future<http.Response> future = http.get(url,
         headers: <String, String>{
-          HttpHeaders.authorizationHeader: context.watch<Auth>().accessToken
+          HttpHeaders.authorizationHeader: context
+              .watch<Auth>()
+              .accessToken
         });
     final Future<List<dynamic>> futures = future.then((http.Response response) {
       if (response.statusCode == 200) {
@@ -211,11 +219,17 @@ class _PlaylistViewPageState extends State<PlaylistViewPage> {
             children: <Widget>[
               getPlaylistEditableHeadline(),
               Text(_getPlaylistSubtitles(playlist),
-                  style: Theme.of(context).textTheme.subtitle2),
+                  style: Theme
+                      .of(context)
+                      .textTheme
+                      .subtitle2),
               const SizedBox(height: 12),
               Text(
                 'Utwory',
-                style: Theme.of(context).textTheme.headline3,
+                style: Theme
+                    .of(context)
+                    .textTheme
+                    .headline3,
               ),
             ],
           ),
@@ -247,6 +261,9 @@ class _PlaylistViewPageState extends State<PlaylistViewPage> {
                   showSnackBar(
                       context, 'Nie udało się zmienić nazwy playlisty...');
                 }
+              }).onError((Exception error, StackTrace stackTrace) {
+                showSnackBar(context,
+                    'Nie można połączyć z serwerem. Spróbój ponownie poźniej.');
               });
             },
           ),
@@ -254,7 +271,10 @@ class _PlaylistViewPageState extends State<PlaylistViewPage> {
       else
         Flexible(
           child:
-              Text(playlist.name, style: Theme.of(context).textTheme.headline1),
+          Text(playlist.name, style: Theme
+              .of(context)
+              .textTheme
+              .headline1),
         ),
       // const SizedBox(width: 4),
       SizedBox(
@@ -269,7 +289,7 @@ class _PlaylistViewPageState extends State<PlaylistViewPage> {
                   });
                 },
                 icon:
-                    Icon(Feather.edit, size: 21, color: Colors.grey.shade400)),
+                Icon(Feather.edit, size: 21, color: Colors.grey.shade400)),
             // const Spacer(),
             IconButton(
                 splashColor: Colors.red.shade900,
@@ -288,22 +308,26 @@ class _PlaylistViewPageState extends State<PlaylistViewPage> {
     final Future<http.Response> future = http.patch(url,
         headers: <String, String>{
           HttpHeaders.authorizationHeader:
-              Provider.of<Auth>(context, listen: false).accessToken,
+          Provider
+              .of<Auth>(context, listen: false)
+              .accessToken,
           HttpHeaders.contentTypeHeader: 'application/json'
         },
         body: jsonEncode(data));
     return future;
   }
 
-  Future<http.Response> _changePlaylistPosition(
-      int associationId, int newPosition) {
+  Future<http.Response> _changePlaylistPosition(int associationId,
+      int newPosition) {
     final Map<String, int> data = <String, int>{'new_position': newPosition};
     final Uri url =
-        Uri.parse('${ApiEndpoints.changePlaylistPosition}$associationId/');
+    Uri.parse('${ApiEndpoints.changePlaylistPosition}$associationId/');
     final Future<http.Response> future = http.patch(url,
         headers: <String, String>{
           HttpHeaders.authorizationHeader:
-              Provider.of<Auth>(context, listen: false).accessToken,
+          Provider
+              .of<Auth>(context, listen: false)
+              .accessToken,
           HttpHeaders.contentTypeHeader: 'application/json'
         },
         body: jsonEncode(data));
@@ -313,7 +337,8 @@ class _PlaylistViewPageState extends State<PlaylistViewPage> {
   void deletePlaylistDialog() {
     showDialog(
         context: context,
-        builder: (_) => AlertDialog(
+        builder: (_) =>
+            AlertDialog(
               title: Text('Uwaga!',
                   style: TextStyle(
                     color: Colors.red.shade400,
@@ -357,18 +382,21 @@ class _PlaylistViewPageState extends State<PlaylistViewPage> {
   Future<http.Response> _deletePlaylist() {
     final Uri url = Uri.parse('${ApiEndpoints.deletePlaylist}${playlist.id}/');
     final Future<http.Response> future =
-        http.delete(url, headers: <String, String>{
+    http.delete(url, headers: <String, String>{
       HttpHeaders.authorizationHeader:
-          Provider.of<Auth>(context, listen: false).accessToken
+      Provider
+          .of<Auth>(context, listen: false)
+          .accessToken
     });
     return future;
   }
 
-  void deleteRecordingDialog(
-      RecordingSimpleDTO recording, int associationId, int playlistPosition) {
+  void deleteRecordingDialog(RecordingSimpleDTO recording, int associationId,
+      int playlistPosition) {
     showDialog(
         context: context,
-        builder: (_) => AlertDialog(
+        builder: (_) =>
+            AlertDialog(
               title: Text('Uwaga!',
                   style: TextStyle(
                     color: Colors.red.shade400,
@@ -417,11 +445,13 @@ class _PlaylistViewPageState extends State<PlaylistViewPage> {
 
   Future<http.Response> _removeRecordingFromPlaylist(int associationId) {
     final Uri url =
-        Uri.parse('${ApiEndpoints.deleteFromPlaylist}$associationId/');
+    Uri.parse('${ApiEndpoints.deleteFromPlaylist}$associationId/');
     final Future<http.Response> future =
-        http.delete(url, headers: <String, String>{
+    http.delete(url, headers: <String, String>{
       HttpHeaders.authorizationHeader:
-          Provider.of<Auth>(context, listen: false).accessToken
+      Provider
+          .of<Auth>(context, listen: false)
+          .accessToken
     });
 
     return future;

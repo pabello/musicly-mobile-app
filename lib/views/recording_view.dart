@@ -100,20 +100,25 @@ class RecordingViewPage extends StatelessWidget {
 Widget getPlaylistsDialogOptions(
     BuildContext context, RecordingSimpleDTO recording) {
   return FutureBuilder<http.Response>(
-    future: fetchPlaylists(context),
-    builder: (BuildContext context, AsyncSnapshot<http.Response> snapshot) {
+      future: fetchPlaylists(context),
+      builder: (BuildContext context, AsyncSnapshot<http.Response> snapshot) {
         final List<SimpleDialogOption> dialogOptions = <SimpleDialogOption>[];
         if (snapshot.connectionState == ConnectionState.done) {
           if (!snapshot.hasError) {
             if (snapshot.data.statusCode == 200) {
-              final dynamic content = jsonDecode(utf8.decode(snapshot.data.bodyBytes));
+              final dynamic content =
+                  jsonDecode(utf8.decode(snapshot.data.bodyBytes));
               if (content.length > 0 != null) {
                 for (final dynamic object in content) {
                   dialogOptions.add(SimpleDialogOption(
                     onPressed: () => addRecordingToPlaylist(
                         context, recording.id, object['id'] as int),
-                    child: Align(alignment: Alignment.centerRight,
-                        child: Text(object['name'].toString(), style: Theme.of(context).textTheme.subtitle2,)),
+                    child: Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          object['name'].toString(),
+                          style: Theme.of(context).textTheme.subtitle2,
+                        )),
                   ));
                 }
                 return SimpleDialog(
@@ -133,8 +138,7 @@ Widget getPlaylistsDialogOptions(
           return const Center(child: CircularProgressIndicator());
         }
         return const SizedBox();
-    }
-  );
+      });
 }
 
 void addRecordingToPlaylist(
@@ -191,66 +195,31 @@ class _LikeStatusButtonsState extends State<LikeStatusButtons> {
   }
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    _fetchRecordingLikeStatus(context, widget.recordingId)
+        .then((http.Response response) {
+      if (response.statusCode == 200) {
+        updateLikeStatus(
+            int.parse(jsonDecode(response.body)['like_status'].toString()));
+      } else if (response.statusCode != 404) {
+        {
+          _showSnackBar('Błąd połączenia z serwerem.');
+        }
+      }
+    }).onError((Exception error, StackTrace stackTrace) {
+      _showSnackBar('Nie można połączyć z serwerem. Spróbój ponownie później.');
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    Future<http.Response> _fetchRecordingLikeStatus(
-        BuildContext context, int recordingId) {
-      final Uri url = Uri.parse('${ApiEndpoints.musicReaction}$recordingId/');
-      final Future<http.Response> future = http.get(url,
-          headers: <String, String>{
-            HttpHeaders.authorizationHeader: context.watch<Auth>().accessToken
-          });
-      return future;
-    }
-
-    Future<http.Response> _setLikeStatus(int recordingId, int likeStatus) {
-      final Map<String, int> data = <String, int>{'like_status': likeStatus};
-      final Uri url = Uri.parse('${ApiEndpoints.musicReaction}$recordingId/');
-      final Future<http.Response> future = http.post(url,
-          headers: <String, String>{
-            HttpHeaders.authorizationHeader:
-                Provider.of<Auth>(context, listen: false).accessToken,
-            HttpHeaders.contentTypeHeader: 'application/json'
-          },
-          body: jsonEncode(data));
-      return future;
-    }
-
-    void _showSnackBar(String message) {
-      SchedulerBinding.instance.addPostFrameCallback((_) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          backgroundColor: Theme.of(context).snackBarTheme.backgroundColor,
-          behavior: SnackBarBehavior.floating,
-          margin: const EdgeInsets.all(10),
-          content: Text(message),
-          duration: const Duration(milliseconds: 3000),
-        ));
-      });
-    }
-
-    void _likeButtonClick(int likeStatus) {
-      _setLikeStatus(widget.recordingId, likeStatus)
-          .then((http.Response response) => <void>{
-                if (response.statusCode == 200)
-                  <void>{updateLikeStatus(likeStatus)}
-                else
-                  {print('error code ${response.statusCode}')}
-              });
-    }
-
-    _fetchRecordingLikeStatus(context, widget.recordingId).then((http.Response
-            response) =>
-        <void>{
-          if (response.statusCode == 200)
-            <void>{
-              updateLikeStatus(int.parse(
-                  jsonDecode(response.body)['like_status'].toString()))
-            }
-          else if (response.statusCode != 404)
-            <void>{
-              <void>{_showSnackBar('Błąd połączenia z serwerem.')}
-            }
-        }); // TODO warto by dodać jakiś error catch, tylko jakoś mi nie chce działać
-
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
@@ -278,6 +247,57 @@ class _LikeStatusButtonsState extends State<LikeStatusButtons> {
         ),
       ],
     );
+  }
+
+  Future<http.Response> _fetchRecordingLikeStatus(
+      BuildContext context, int recordingId) {
+    final Uri url = Uri.parse('${ApiEndpoints.musicReaction}$recordingId/');
+    final Future<http.Response> future = http.get(url,
+        headers: <String, String>{
+          HttpHeaders.authorizationHeader: context.watch<Auth>().accessToken
+        });
+    return future;
+  }
+
+  Future<http.Response> _setLikeStatus(int recordingId, int likeStatus) {
+    final Map<String, int> data = <String, int>{'like_status': likeStatus};
+    final Uri url = Uri.parse('${ApiEndpoints.musicReaction}$recordingId/');
+    final Future<http.Response> future = http.post(url,
+        headers: <String, String>{
+          HttpHeaders.authorizationHeader:
+              Provider.of<Auth>(context, listen: false).accessToken,
+          HttpHeaders.contentTypeHeader: 'application/json'
+        },
+        body: jsonEncode(data));
+    return future;
+  }
+
+  void _showSnackBar(String message) {
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        backgroundColor: Theme.of(context).snackBarTheme.backgroundColor,
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(10),
+        content: Text(message),
+        duration: const Duration(milliseconds: 3000),
+      ));
+    });
+  }
+
+  void _likeButtonClick(int likeStatus) {
+    _setLikeStatus(widget.recordingId, likeStatus)
+        .then((http.Response response) {
+      if (response.statusCode == 200) {
+        updateLikeStatus(likeStatus);
+      } else if (response.statusCode == 500) {
+        _showSnackBar(
+            'Nie udało się zmienić oceny utworu. Spróbój ponownie później.');
+      } else {
+        _showSnackBar('Błąd połączenia z serwerem. Spróbój ponownie później.');
+      }
+    }).onError((Exception error, StackTrace stackTrace) {
+      _showSnackBar('Nie można połączyć z serwerem. Spróbój ponownie później.');
+    });
   }
 }
 

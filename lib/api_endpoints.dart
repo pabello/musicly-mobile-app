@@ -9,6 +9,7 @@ class ApiEndpoints {
   static const String changePassword = '$_protocol://$_address/api/changePassword/';
 
   static const String accountDetails = '$_protocol://$_address/api/account/';
+  static const String changeUsername = '$_protocol://$_address/api/changeUsername/';
   static const String sendConfirmationMail = '$_protocol://$_address/api/confirmationMail/';
   static const String deleteAccount = '$_protocol://$_address/api/account/delete/';
 

@@ -196,6 +196,8 @@ class _LoginViewPageState extends State<LoginViewPage> {
         onChanged: (_) => setState(() => responseError = null),
         controller: controller,
         obscureText: isPassword,
+        enableSuggestions: !isPassword,
+        autocorrect: !isPassword,
         validator: isRegisterForm
             ? (String value) {
                 return validator(value) as String;
@@ -329,7 +331,7 @@ class _LoginViewPageState extends State<LoginViewPage> {
       }
     }).onError((Exception error, StackTrace stackTrace) {
       showSnackBar(
-          context, 'Nie można połączyć z serwerem\nSpróbuj ponownie późńiej');
+          context, 'Nie można połączyć z serwerem.\nSpróbuj ponownie późńiej.');
     });
   }
 
